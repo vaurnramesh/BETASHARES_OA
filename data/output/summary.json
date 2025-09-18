@@ -1,0 +1,27 @@
+{
+    "old_portfolio_value": 75148203.78,
+    "new_portfolio_value": 83233532.93,
+    "total_trade_value": 32955795.47,
+    "buy_value": 10778443.11,
+    "sell_value": -12435233.16,
+    "adjust_value": 9742119.2,
+    "turnover_pct": "39.59%",
+    "total_new_shares": 2041371,
+    "total_sold_shares": 6248860,
+    "new_buys": [
+        {
+            "company": "H",
+            "shares": 2041371.8018508437,
+            "trade_shares": 2041371.8018508437,
+            "trade_value": 10778443.113772456
+        }
+    ],
+    "sold_stocks": [
+        {
+            "company": "D",
+            "shares_old": 6248860.884734554,
+            "trade_shares": -6248860.884734554,
+            "trade_value": -12435233.160621762
+        }
+    ]
+}
