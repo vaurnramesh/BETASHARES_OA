@@ -5,7 +5,8 @@
     "buy_value": 10778443.11,
     "sell_value": -12435233.16,
     "adjust_value": 9742119.2,
-    "turnover_pct": "39.59%",
+    "dollar_turnover_pct": "39.59%",
+    "share_turnover_pct": "72.49%",
     "total_new_shares": 2041371,
     "total_sold_shares": 6248860,
     "new_buys": [

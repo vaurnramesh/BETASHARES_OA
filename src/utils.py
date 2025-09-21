@@ -15,8 +15,20 @@ def load_data(csv_name: str) -> pd.DataFrame:
 
 def save_dataframe(df, csv_output, index=False):
     file_path = Path(csv_output)
-    df.to_csv(file_path, index=index)
+
+    df_out = df.copy()
+
+    # Round monetary values to 2 decimals
+    money_cols = ["allocation_old", "allocation", "price", "trade_value"]
+    df_out[money_cols] = df_out[money_cols].round(2)
+
+    # Round shares to whole numbers
+    share_cols = ["shares_old", "shares", "trade_shares"]
+    df_out[share_cols] = df_out[share_cols].round(0).astype("Int64")
+    
+    df_out.to_csv(file_path, index=index)
     print(f"DataFrame saved to {file_path}")
+
 
 
 def save_summary_json(summary, file_path):

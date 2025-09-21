@@ -158,7 +158,7 @@ def rebalancing(df, old_date, new_date, index_construct, **kwargs):
     buy_df["shares_old"] = 0
     buy_df["allocation_old"] = 0
     buy_df["trade_shares"] = buy_df["shares"]
-    buy_df["trade_value"] = buy_df["allocation"]
+    buy_df["trade_value"] = buy_df["trade_shares"] * buy_df["price"]
     buy_df["action"] = ["BUY"] * len(buy_df)
     combined = pd.concat([combined, buy_df], ignore_index=True)
 
@@ -196,12 +196,20 @@ def portfolio_summary(combined, round_digits):
     - sell_value: Total dollar value of positions liquidated (action == "SELL")
     - adjust_value: Total incremental dollar value of adjustments 
                     for holdings that remain in the index (action == "ADJUST")
-    - turnover_pct: Portfolio turnover as a percentage of the new portfolio value.
+    - dollar_turnover_pct: Portfolio turnover as a percentage of the new portfolio value.
                 Calculated as sum of absolute trade values divided by the new portfolio value:
+
                 turnover_pct = total_trade_value / new_portfolio_value
-                Note: Industry may define turnover differently, e.g., 
-                min(buy_value, sell_value) / average(portfolio_value). 
-                This implementation follows the absolute trade value convention.
+
+    - shares_turnover_pct: Portfolio turnover measured in shares (industry standard). 
+                Calculated as the sum of absolute shares traded across all actions 
+                divided by the average number of shares held during the period:
+  
+                shares_turnover_pct = (SUM(|trade_shares|) / (SUM(shares_old + shares)) / 2) x 100
+  
+                This gives a percentage indicating how much of the portfolio's holdings 
+                were replaced or traded in terms of number of shares, independent of 
+                dollar value.
     - total_new_shares: Total number of shares purchased in "BUY" actions
     - total_sold_shares: Total number of shares sold in "SELL" actions
     - new_buys: DataFrame of all companies newly added ("BUY"), including
@@ -223,7 +231,13 @@ def portfolio_summary(combined, round_digits):
     sells = float(portfolio_stocks[portfolio_stocks["action"] == "SELL"]["trade_value"].sum())
     adjusts = float(portfolio_stocks[portfolio_stocks["action"] == "ADJUST"]["trade_value"].sum())
 
-    turnover_pct = total_trade_value / new_value if new_value > 0 else 0
+    dollar_turnover_pct = total_trade_value / new_value if new_value > 0 else 0
+
+    # Share-based turnover (industry standard)
+    portfolio_stocks["avg_shares"] = (portfolio_stocks["shares_old"] + portfolio_stocks["shares"]) / 2
+    total_avg_shares = portfolio_stocks["avg_shares"].sum()
+    share_turnover_pct = portfolio_stocks["trade_shares"].abs().sum() / total_avg_shares * 100
+
 
     # New equities purchased
     new_buys = portfolio_stocks[portfolio_stocks["action"] == "BUY"].copy()
@@ -243,7 +257,8 @@ def portfolio_summary(combined, round_digits):
         "buy_value": round(buys, round_digits),
         "sell_value": round(sells, round_digits),
         "adjust_value": round(adjusts, round_digits),
-        "turnover_pct": f"{turnover_pct:.2%}",
+        "dollar_turnover_pct": f"{dollar_turnover_pct:.2%}",
+        "share_turnover_pct": f"{share_turnover_pct:.2f}%",
         "total_new_shares": int(total_new_shares),
         "total_sold_shares": int(total_sold_shares),
         "new_buys": new_buys_list.reset_index(drop=True),

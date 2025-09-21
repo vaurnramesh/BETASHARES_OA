@@ -1,6 +1,5 @@
 import pandas as pd
-from src.core import rebalancing   # replace with actual import
-
+from src.core import rebalancing
 
 def mock_index_construct(df, date, **kwargs):
     """
@@ -32,7 +31,7 @@ def mock_index_construct(df, date, **kwargs):
 
 
 def test_rebalancing():
-    # Dummy df (not used by mock, but required by signature)
+    # Dummy df
     df = pd.DataFrame()
 
     result = rebalancing(df, "old", "new", mock_index_construct)
@@ -58,11 +57,11 @@ def test_rebalancing():
     assert row_b["shares_old"] == 300
     assert row_b["shares"] == 0
     assert row_b["trade_shares"] == -300
-    assert row_b["trade_value"] == -9_000_000 # Selling all holdings
+    assert row_b["trade_value"] == -9_000 # Selling all holdings
 
     # Check C buy
     row_c = result[result["company"] == "C"].iloc[0]
     assert row_c["shares_old"] == 0
     assert row_c["shares"] == 200
     assert row_c["trade_shares"] == 200
-    assert row_c["trade_value"] == 8_000_000 # Buying new holdings
+    assert row_c["trade_value"] == 8_000 # Buying new holdings

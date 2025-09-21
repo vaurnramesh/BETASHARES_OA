@@ -33,6 +33,8 @@ The primary goals are:
 
 4. Save both detailed trade logs (CSV) and high-level summaries (JSON) for reporting.
 
+![overview](images/overview.jpeg)
+
 
 ## Data Loading
 
@@ -143,10 +145,7 @@ Definition: The dollar value of the trade for that stock.
 trade_value = trade_shares * price
 ```
 
-* For BUY trades, `trade_value = allocation` because all shares are new purchases
-* For ADJUST and SELL, it’s calculated as `trade_shares * price`
-
-| Stock | trade\_shares | price | trade\_value |
+| Stock | trade_shares | price | trade_value |
 | ----- | ------------- | ----- | ------------ |
 | A     | 20            | 12.32 | 246.40       |
 | B     | -50           | 4.52  | -226.00      |
@@ -180,18 +179,25 @@ After rebalancing the portfolio, we generate a summary report that tells us how 
     * **Sell Value**: Dollar value received from equities removed from the portfolio.
     * **Adjust Value**: Dollar value of trades for stocks that remain in the portfolio but needed adjustments to reach their new target weights.
 
-3. Turnover
+3. Dollar Turnover
 
-    * **Turnover %**: Measures how much of the portfolio’s value was traded relative to the new portfolio value.
+    * **dollar_turnover_pct %**: Measures how much of the portfolio’s value was traded relative to the new portfolio value in percentage
     * A high turnover indicates more active rebalancing, while a low turnover suggests minimal changes.
-    * Turnover % is calculated as sum of absolute trade values divided by new portfolio value. Industry convention may use `min(BUY, SELL) ÷ avg(portfolio_value)`.
 
-4. Equity Changes
+4. Shares Turnover (Industry Standard)
+    * **share_turnover_pct**: Measures how many shares were traded relative to the average number of shares outstanding for the portfolio.
+
+    ![shares_turnover](images/shares_turnover.jpeg)
+
+    * A turnover based on actual share movement rather than dollar value.
+    * High share turnover suggests significant trading activity, even if the dollar values are smaller due to low-priced stocks
+
+5. Equity Changes
 
     * **Total New Shares**: Total number of shares purchased for newly added stocks.
     * **Total Sold Shares**: Total number of shares sold for stocks removed from the portfolio.
 
-5. Detailed Trade Lists
+6. Detailed Trade Lists
 
     * **New Buys Table**: Shows all newly added stocks, the number of shares purchased, and the dollar value spent.
     * **Sold Stocks Table:** Shows all stocks removed from the portfolio, the number of shares sold, and the dollar value received.
